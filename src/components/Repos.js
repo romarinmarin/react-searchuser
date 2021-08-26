@@ -33,11 +33,44 @@ const Repos = () => {
     })
     .slice(0, 5);
 
+  // const stars = repos
+  //   .map((item) => {
+  //     return { label: item.name, value: item.stargazers_count };
+  //   })
+  //   .sort((a, b) => {
+  //     return b.value - a.value;
+  //   })
+  //   .slice(0, 5);
+
+  // const forks = repos
+  //   .map((item) => {
+  //     return { label: item.name, value: item.forks_count };
+  //   })
+  //   .sort((a, b) => {
+  //     return b.value - a.value;
+  //   })
+  //   .slice(0, 5);
+
+  let { stars, forks } = repos.reduce(
+    (total, repo) => {
+      const { name, stargazers_count, forks } = repo;
+      total.stars[stargazers_count] = { label: name, value: stargazers_count };
+      total.forks[forks] = { label: name, value: forks };
+      return total;
+    },
+    { stars: {}, forks: {} }
+  );
+
+  stars = Object.values(stars).slice(-5).reverse();
+  forks = Object.values(forks).slice(-5).reverse();
+
   return (
     <section className="section">
       <Wrapper className="section-center">
         <Pie3D data={mostUsed} />
+        <Column3D data={stars} />
         <Doughnut2D data={mostPopular} />
+        <Bar3D data={forks} />
       </Wrapper>
     </section>
   );
