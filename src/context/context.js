@@ -15,7 +15,7 @@ const GithubProvider = ({ children }) => {
   const [error, setError] = useState({ show: false, msg: "" });
 
   // Request loading
-
+  const [isLoading, setIsLoading] = useState(false);
   const [requests, setRequests] = useState(0);
 
   const checkRequests = () => {
@@ -27,21 +27,26 @@ const GithubProvider = ({ children }) => {
         } = data;
         setRequests(remaining);
         if (remaining === 0) {
-          toggleError(true, "Requests limits exceted");
+          toggleError(true, "You are over the request limit");
         }
       })
       .catch((err) => console.log(err));
   };
 
   const getGithubUser = async (user) => {
+    toggleError();
+    setIsLoading(true);
     const response = await axios
-      .get(`https://api.github.com/users/${user}`)
+      .get(`${rootUrl}/users/${user}`)
       .catch((err) => console.log(err));
+
     if (response) {
       setGithubUser(response.data);
     } else {
       toggleError(true, "there is no user with that username");
     }
+    setIsLoading(false);
+    checkRequests();
   };
 
   const toggleError = (show, msg) => {
@@ -52,7 +57,15 @@ const GithubProvider = ({ children }) => {
 
   return (
     <GithubContext.Provider
-      value={{ githubUser, repos, followers, requests, error, getGithubUser }}
+      value={{
+        githubUser,
+        repos,
+        followers,
+        requests,
+        error,
+        getGithubUser,
+        isLoading,
+      }}
     >
       {children}
     </GithubContext.Provider>
