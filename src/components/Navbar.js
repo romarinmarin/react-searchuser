@@ -5,10 +5,11 @@ import { useAuth0 } from "@auth0/auth0-react";
 const Navbar = () => {
   const { loginWithRedirect, isAuthenticated, user, isLoading, logout } =
     useAuth0();
+  console.log(user);
   return (
     <Wrapper>
       {user && <img src={user.picture} alt={user.name}></img>}
-      {user && <h4>{user.name}</h4>}
+      {user && <h4>Welcome {user.name}</h4>}
       {user ? (
         <button
           onClick={() => {
